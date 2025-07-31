@@ -83,13 +83,13 @@ while true; do
             echo "  Finished testing $participant!"
             echo "================================="
 
+            sleep 5
+
         else
             echo "================================="
             echo "  Skipping $participant"
             echo "================================="
         fi
-
-        sleep 15
     )
     done
 

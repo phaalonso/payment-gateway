@@ -28,7 +28,7 @@ public class PaymentsController {
     }
 
     @GetMapping("/payments-summary")
-    public String getSummary(@RequestParam Instant from, @RequestParam Instant to) {
+    public String getSummary(@RequestParam(required = false) Instant from, @RequestParam(required = false) Instant to) {
         var summary = paymentRepository.getSummary(from, to);
 
         return """
