@@ -1,23 +1,26 @@
 package com.alonso.pedro.paymentgateway.controller;
 
-import com.alonso.pedro.paymentgateway.model.PaymentDTO;
+import com.alonso.pedro.paymentgateway.model.PaymentRequestDTO;
+import com.alonso.pedro.paymentgateway.repository.InMemoryPaymentRepository;
+import com.alonso.pedro.paymentgateway.repository.PaymentRepository;
 import com.alonso.pedro.paymentgateway.service.PaymentService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @RestController
 public class PaymentsController {
     private final PaymentService paymentService;
+
+    private final PaymentRepository paymentRepository = InMemoryPaymentRepository.getInstance();
 
     public PaymentsController(PaymentService paymentService) {
         this.paymentService = paymentService;
     }
 
     @PostMapping("/payments")
-    public ResponseEntity receivePayment(@RequestBody PaymentDTO paymentDTO) {
+    public ResponseEntity receivePayment(@RequestBody PaymentRequestDTO paymentDTO) {
         paymentService.sendPayment(paymentDTO);
 
         return ResponseEntity.ok()
@@ -25,18 +28,20 @@ public class PaymentsController {
     }
 
     @GetMapping("/payments-summary")
-    public String getSummary(@RequestParam LocalDateTime from, @RequestParam LocalDateTime to) {
+    public String getSummary(@RequestParam Instant from, @RequestParam Instant to) {
+        var summary = paymentRepository.getSummary(from, to);
+
         return """
                 {
                     "default" : {
-                        "totalRequests": %s,
-                        "totalAmount": %s
+                        "totalRequests": %d,
+                        "totalAmount": %.2f
                     },
                     "fallback" : {
                         "totalRequests": %s,
                         "totalAmount": %s
                     }
                 }
-                """.formatted(0, 0.0, 0, 0.0);
+                """.formatted(summary.totalRequests(), summary.totalAmount(), 0, 0.0);
     }
 }

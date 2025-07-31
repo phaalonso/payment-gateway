@@ -1,6 +1,9 @@
 package com.alonso.pedro.paymentgateway.service;
 
 import com.alonso.pedro.paymentgateway.model.PaymentDTO;
+import com.alonso.pedro.paymentgateway.model.PaymentRequestDTO;
+import com.alonso.pedro.paymentgateway.repository.InMemoryPaymentRepository;
+import com.alonso.pedro.paymentgateway.repository.PaymentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,10 +14,12 @@ import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Instant;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
@@ -28,12 +33,16 @@ public class PaymentService {
 
     private final AtomicBoolean isPaymentProcessorHealthy = new AtomicBoolean(true);
 
+    private final PaymentRepository paymentRepository = InMemoryPaymentRepository.getInstance();
+
     @Value("${pagamento.processor.default.url}")
     private String defaultUrl;
 
     private PaymentDTO firstPayment;
 
-    public void sendPayment(PaymentDTO paymentDTO) {
+    public void sendPayment(PaymentRequestDTO requestDTO) {
+        var paymentDTO = PaymentDTO.of(requestDTO);
+
         paymentsQueue.add(paymentDTO);
     }
 
@@ -45,7 +54,7 @@ public class PaymentService {
 
         log.info("Checking if Payment Processor is healthy");
 
-        var result = processPayment(firstPayment);
+        var result = sendPayment(firstPayment);
 
         if (result) {
             log.info("Payment is health again");
@@ -63,34 +72,48 @@ public class PaymentService {
             return;
         }
 
-        PaymentDTO paymentDTO;
+        var size = paymentsQueue.size();
 
-        while ((paymentDTO = paymentsQueue.poll()) != null) {
-            log.info("Queue size: {}", paymentsQueue.size() + 1);
+        log.info("Queue size {}", size);
 
-            var result = processPayment(paymentDTO);
-
-            // stop processing loop if there is an 412 or other error while processing
-            if (!result) {
-                isPaymentProcessorHealthy.set(false);
-
-                return;
-            }
-
-            if (firstPayment == null) {
-                firstPayment = paymentDTO;
+        try (ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor()) {
+            for (int i = 0; i < size; i++) {
+                executorService.submit(this::processPayment);
             }
         }
     }
 
-    public boolean processPayment(PaymentDTO paymentDTO) {
+    public void processPayment() {
+        var payment = paymentsQueue.poll();
+
+        if (payment == null) {
+            return;
+        }
+
+        var result = sendPayment(payment);
+
+        // stop processing loop if there is an 412 or other error while processing
+        if (!result) {
+            isPaymentProcessorHealthy.set(false);
+
+            return;
+        }
+
+        paymentRepository.save(payment);
+
+        if (firstPayment == null) {
+            firstPayment = payment;
+        }
+    }
+
+    public boolean sendPayment(PaymentDTO paymentDTO) {
         var request = """
                 {
                   "correlationId": "%s",
-                  "amount": %f,
+                  "amount": %.2f,
                   "requestedAt": "%s"
                 }
-                """.formatted(paymentDTO.correlationId(), paymentDTO.amount(), Instant.now());
+                """.formatted(paymentDTO.correlationId(), paymentDTO.amount(), paymentDTO.requestedAt());
 
         HttpHeaders headers = new HttpHeaders();
 
@@ -104,6 +127,9 @@ public class PaymentService {
             return response.getStatusCode().value() == HttpStatus.OK.value();
         } catch (HttpClientErrorException.UnprocessableEntity e) {
             return true;
+        } catch (HttpServerErrorException.InternalServerError e) {
+            log.error("Internal server error");
+            return false;
         } catch (Exception e) {
             log.error("Error while integrating with payment processor", e);
 
