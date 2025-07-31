@@ -1,0 +1,49 @@
+@port = 8001
+@token = 123
+
+
+POST http://localhost:{{port}}/payments
+Content-Type: application/json
+
+{
+    "correlationId": "{{$guid}}",
+    "amount": 19.90,
+    "requestedAt": "2020-01-01T12:34:56.789Z"
+}
+
+###
+GET http://localhost:{{port}}/payments/service-health
+
+### 
+GET http://localhost:{{port}}/admin/payments-summary
+X-Rinha-Token: {{token}}
+
+### 
+GET http://localhost:{{port}}/admin/payments-summary?from=2000-01-01T00:00:00.000Z&to=2100-01-01T00:00:00.000Z
+X-Rinha-Token: {{token}}
+
+###
+PUT http://localhost:{{port}}/admin/configurations/delay
+X-Rinha-Token: {{token}}
+Content-Type: application/json
+
+{
+    "delay": 0
+}
+
+###
+PUT http://localhost:{{port}}/admin/configurations/failure
+X-Rinha-Token: {{token}}
+Content-Type: application/json
+
+{
+    "failure": false
+}
+
+###
+GET http://localhost:{{port}}/admin/payments-summary
+X-Rinha-Token: {{token}}
+
+###
+POST http://localhost:{{port}}/admin/purge-payments
+X-Rinha-Token: {{token}}
