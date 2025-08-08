@@ -44,16 +44,26 @@ public class PostgresPaymentRepository implements PaymentRepository {
                 });
     }
 
-    private static final String QUERY_SUMMARY = "SELECT count(*), sum(amount) FROM payment WHERE requestedAt > ? AND requestedAt < ?";
+    private static final String QUERY_ALL_SUMMARY = "SELECT count(*), sum(amount) FROM payment";
+
+    private static final String QUERY_SUMMARY = QUERY_ALL_SUMMARY + " WHERE requestedAt > ? AND requestedAt < ?";
 
     @Override
     public ResultsDTO getSummary(Instant from, Instant to) {
+        // TODO tratar caso so um dos campos for enviado
+        if (from == null && to == null) {
+            return jdbcTemplate.queryForObject(
+                    QUERY_ALL_SUMMARY,
+                    (rs, i) -> new ResultsDTO(
+                            rs.getInt(1),
+                            rs.getBigDecimal(2)));
+        }
+
         return jdbcTemplate.queryForObject(
                 QUERY_SUMMARY,
                 (rs, i) -> new ResultsDTO(
                         rs.getInt(1),
-                        rs.getBigDecimal(2)
-                ),
+                        rs.getBigDecimal(2)),
                 Timestamp.from(from),
                 Timestamp.from(to)
         );
