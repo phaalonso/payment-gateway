@@ -9,7 +9,7 @@ COPY pom.xml ./
 COPY src ./src
 
 # Compila a aplicação
-RUN mvn package
+RUN mvn package -DskipTests
 
 # Etapa 2: Criar a imagem final para execução
 FROM eclipse-temurin:21-jre-alpine

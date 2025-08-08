@@ -9,7 +9,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 
 public class InMemoryPaymentRepository implements PaymentRepository {
     private final static InMemoryPaymentRepository INSTANCE = new InMemoryPaymentRepository();
@@ -21,8 +20,8 @@ public class InMemoryPaymentRepository implements PaymentRepository {
     }
 
     @Override
-    public void save(PaymentDTO paymentDTO) {
-        paymentDTOs.add(paymentDTO);
+    public void save(List<PaymentDTO> paymentDTOList) {
+        paymentDTOs.addAll(paymentDTOList);
     }
 
     @Override

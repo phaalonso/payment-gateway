@@ -4,6 +4,7 @@ import com.alonso.pedro.paymentgateway.model.PaymentDTO;
 import com.alonso.pedro.paymentgateway.model.PaymentRequestDTO;
 import com.alonso.pedro.paymentgateway.repository.InMemoryPaymentRepository;
 import com.alonso.pedro.paymentgateway.repository.PaymentRepository;
+import com.alonso.pedro.paymentgateway.repository.PostgresPaymentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,22 +33,32 @@ public class PaymentService {
 
     private final ConcurrentLinkedQueue<PaymentDTO> paymentsQueue = new ConcurrentLinkedQueue<>();
 
+    private final ConcurrentLinkedQueue<PaymentDTO> databaseQueue = new ConcurrentLinkedQueue<>();
+
     private final AtomicBoolean isPaymentProcessorHealthy = new AtomicBoolean(true);
 
-    private final PaymentRepository paymentRepository = InMemoryPaymentRepository.getInstance();
+    //    private final PaymentRepository paymentRepository = InMemoryPaymentRepository.getInstance();
+    private final PostgresPaymentRepository paymentRepository;
 
     @Value("${pagamento.processor.default.url}")
     private String defaultUrl;
 
+    @Value("${pagamento.processor.concurrency:1}")
+    private Integer maxConcurrentPayments;
+
     private PaymentDTO firstPayment;
+
+    public PaymentService(PostgresPaymentRepository paymentRepository) {
+        this.paymentRepository = paymentRepository;
+    }
 
     public void sendPayment(PaymentRequestDTO requestDTO) {
         var paymentDTO = PaymentDTO.of(requestDTO);
 
-        paymentsQueue.add(paymentDTO);
+        paymentsQueue.offer(paymentDTO);
     }
 
-    @Scheduled(fixedRate = 500)
+    @Scheduled(fixedRate = 1000)
     public void checkHealth() {
         if (isPaymentProcessorHealthy.get() || firstPayment == null) {
             return;
@@ -66,6 +78,36 @@ public class PaymentService {
         }
     }
 
+    // fixedDelay runs after the last execution was finished
+    // fixedRate runs even if the previous execution is running
+    @Scheduled(fixedDelay = 100)
+    public void saveInDatabase() {
+        var BATCH_SIZE = 500;
+
+        if (databaseQueue.isEmpty())
+            return;
+
+        var listSize = databaseQueue.size();
+
+        log.info("Storing {} itens on the database", listSize);
+
+        for (int i = 0; i < Math.abs(listSize / BATCH_SIZE) + 1 ; i++) {
+            var payments = new ArrayList<PaymentDTO>();
+
+            for (int j = 0; j < BATCH_SIZE; j++) {
+                var element = databaseQueue.poll();
+
+                if (element == null) {
+                    break;
+                }
+
+                payments.add(element);
+            }
+
+            paymentRepository.save(payments);
+        }
+    }
+
     @Scheduled(initialDelay = 10, fixedDelay = 200)
     public void processJob() {
         if (paymentsQueue.isEmpty() || !isPaymentProcessorHealthy.get()) {
@@ -73,11 +115,12 @@ public class PaymentService {
         }
 
         var size = paymentsQueue.size();
+        var processSize = Math.min(size, maxConcurrentPayments);
 
-        log.info("Queue size {}", size);
+        log.info("Processing {} of {} itens", processSize, size);
 
         try (ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor()) {
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < processSize; i++) {
                 executorService.submit(this::processPayment);
             }
         }
@@ -96,14 +139,17 @@ public class PaymentService {
         if (!result) {
             isPaymentProcessorHealthy.set(false);
 
+            // requeue payment item
+            paymentsQueue.offer(payment);
+
             return;
         }
-
-        paymentRepository.save(payment);
 
         if (firstPayment == null) {
             firstPayment = payment;
         }
+
+        databaseQueue.offer(payment);
     }
 
     public boolean sendPayment(PaymentDTO paymentDTO) {
