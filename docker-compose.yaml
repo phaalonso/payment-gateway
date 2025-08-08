@@ -72,7 +72,7 @@ services:
         window: 5s
       resources:
         limits:
-          cpus: "0.5"
+          cpus: "0.3"
           memory: "100MB"
   nginx:
     image: nginx:alpine
