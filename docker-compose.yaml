@@ -1,8 +1,9 @@
 x-service-templates:
   payment-gateway: &payment-gateway
-    build:
-      dockerfile: Dockerfile
-      no_cache: true
+    image: docker.io/phaalonso/rinha-backend-2025-java:0.0.3
+#    build:
+#      dockerfile: Dockerfile
+#      no_cache: true
     hostname: api01
     depends_on:
       - db
@@ -14,6 +15,8 @@ x-service-templates:
         -XX:+UseZGC
         -Djdk.tracePinnedThreads=full
       "pagamento.processor.concurrency": 1000
+      "pagamento.processor.default.url": http://payment-processor-default:8080
+      "pagamento.processor.fallback.url": http://payment-processor-fallback:8080
       "spring.datasource.url": jdbc:postgresql://db:5432/rinha
       "spring.datasource.username": postgres
       "spring.datasource.password": postgres
@@ -24,8 +27,8 @@ x-service-templates:
     deploy:
       resources:
         limits:
-          cpus: "1.3"
-          memory: "300MB"
+          cpus: "0.5"
+          memory: "100MB"
 services:
   api01:
     <<: *payment-gateway
@@ -69,9 +72,8 @@ services:
         window: 5s
       resources:
         limits:
-          cpus: "1.5"
-          memory: "250MB"
-
+          cpus: "0.5"
+          memory: "100MB"
   nginx:
     image: nginx:alpine
     container_name: rinha-router-nginx
