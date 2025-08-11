@@ -7,8 +7,6 @@
   }, {
     "pattern":"\\QMETA-INF/resources/index.html\\E"
   }, {
-    "pattern":"\\QMETA-INF/resources/purge-payments\\E"
-  }, {
     "pattern":"\\QMETA-INF/services/ch.qos.logback.classic.spi.Configurator\\E"
   }, {
     "pattern":"\\QMETA-INF/services/java.lang.System$LoggerFinder\\E"
@@ -47,11 +45,13 @@
   }, {
     "pattern":"\\QMETA-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.replacements\\E"
   }, {
-    "pattern":"\\Qapplication-local.xml\\E"
+    "pattern":"\\Qapplication-default.properties\\E"
   }, {
-    "pattern":"\\Qapplication-local.yaml\\E"
+    "pattern":"\\Qapplication-default.xml\\E"
   }, {
-    "pattern":"\\Qapplication-local.yml\\E"
+    "pattern":"\\Qapplication-default.yaml\\E"
+  }, {
+    "pattern":"\\Qapplication-default.yml\\E"
   }, {
     "pattern":"\\Qapplication.xml\\E"
   }, {
@@ -63,13 +63,13 @@
   }, {
     "pattern":"\\Qcom/alonso/pedro/paymentgateway/\\E"
   }, {
-    "pattern":"\\Qconfig/application-local.properties\\E"
+    "pattern":"\\Qconfig/application-default.properties\\E"
   }, {
-    "pattern":"\\Qconfig/application-local.xml\\E"
+    "pattern":"\\Qconfig/application-default.xml\\E"
   }, {
-    "pattern":"\\Qconfig/application-local.yaml\\E"
+    "pattern":"\\Qconfig/application-default.yaml\\E"
   }, {
-    "pattern":"\\Qconfig/application-local.yml\\E"
+    "pattern":"\\Qconfig/application-default.yml\\E"
   }, {
     "pattern":"\\Qconfig/application.properties\\E"
   }, {
@@ -535,11 +535,7 @@
   }, {
     "pattern":"\\Qpublic/index.html\\E"
   }, {
-    "pattern":"\\Qpublic/purge-payments\\E"
-  }, {
     "pattern":"\\Qresources/index.html\\E"
-  }, {
-    "pattern":"\\Qresources/purge-payments\\E"
   }, {
     "pattern":"\\Qschema-all.sql\\E"
   }, {
@@ -548,10 +544,6 @@
     "pattern":"\\Qspring.properties\\E"
   }, {
     "pattern":"\\Qstatic/index.html\\E"
-  }, {
-    "pattern":"\\Qstatic/purge-payments\\E"
-  }, {
-    "pattern":"java.base:\\Qjdk/internal/icu/impl/data/icudt72b/nfc.nrm\\E"
   }, {
     "pattern":"java.base:\\Qjdk/internal/icu/impl/data/icudt72b/nfkc.nrm\\E"
   }, {

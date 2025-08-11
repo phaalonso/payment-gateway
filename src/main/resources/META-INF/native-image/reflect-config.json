@@ -72,10 +72,6 @@
   "name":"[Z"
 },
 {
-  "name":"apple.security.AppleProvider",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
   "name":"boolean",
   "queryAllDeclaredMethods":true,
   "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean"] }, {"name":"from","parameterTypes":["java.lang.Boolean"] }, {"name":"of","parameterTypes":["java.lang.Boolean"] }, {"name":"valueOf","parameterTypes":["java.lang.Boolean"] }]
@@ -102,29 +98,12 @@
   "name":"co.elastic.clients.transport.ElasticsearchTransport"
 },
 {
-  "name":"com.alonso.pedro.paymentgateway.NativeHintsConfig",
-  "allDeclaredFields":true,
-  "queryAllDeclaredMethods":true,
-  "queryAllDeclaredConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"setBeanFactory","parameterTypes":["org.springframework.beans.factory.BeanFactory"] }]
-},
-{
-  "name":"com.alonso.pedro.paymentgateway.NativeHintsConfig$$SpringCGLIB$$0",
-  "allDeclaredFields":true,
-  "queryAllDeclaredMethods":true,
-  "queryAllDeclaredConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"CGLIB$SET_STATIC_CALLBACKS","parameterTypes":["org.springframework.cglib.proxy.Callback[]"] }]
-},
-{
   "name":"com.alonso.pedro.paymentgateway.PaymentGatewayApplication",
   "allDeclaredFields":true,
   "allDeclaredClasses":true,
   "queryAllDeclaredMethods":true,
   "queryAllDeclaredConstructors":true,
   "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"main","parameterTypes":["java.lang.String[]"] }]
-},
-{
-  "name":"com.alonso.pedro.paymentgateway.PostgresHints"
 },
 {
   "name":"com.alonso.pedro.paymentgateway.controller.PaymentsController",
@@ -200,7 +179,7 @@
   "name":"com.fasterxml.jackson.core.ObjectCodec",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"getJsonFactory","parameterTypes":[] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","com.fasterxml.jackson.core.type.TypeReference"] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","java.lang.Class"] }]
+  "methods":[{"name":"getJsonFactory","parameterTypes":[] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","com.fasterxml.jackson.core.type.ResolvedType"] }, {"name":"readValues","parameterTypes":["com.fasterxml.jackson.core.JsonParser","com.fasterxml.jackson.core.type.TypeReference"] }]
 },
 {
   "name":"com.fasterxml.jackson.core.TreeCodec",
@@ -649,10 +628,6 @@
   "name":"java.lang.CloneNotSupportedException"
 },
 {
-  "name":"java.lang.Cloneable",
-  "queryAllDeclaredMethods":true
-},
-{
   "name":"java.lang.Comparable",
   "queryAllDeclaredMethods":true
 },
@@ -868,9 +843,6 @@
   "queryAllPublicMethods":true
 },
 {
-  "name":"java.lang.reflect.Method"
-},
-{
   "name":"java.lang.reflect.ParameterizedType",
   "methods":[{"name":"getActualTypeArguments","parameterTypes":[] }, {"name":"getRawType","parameterTypes":[] }]
 },
@@ -917,9 +889,6 @@
 {
   "name":"java.nio.channels.SocketChannel",
   "methods":[{"name":"open","parameterTypes":["java.net.ProtocolFamily"] }]
-},
-{
-  "name":"java.nio.channels.spi.AbstractInterruptibleChannel"
 },
 {
   "name":"java.rmi.MarshalledObject"
@@ -997,10 +966,7 @@
   "name":"java.util.Collection"
 },
 {
-  "name":"java.util.Date",
-  "allDeclaredFields":true,
-  "queryAllDeclaredMethods":true,
-  "queryAllDeclaredConstructors":true
+  "name":"java.util.Date"
 },
 {
   "name":"java.util.Enumeration"
@@ -1354,9 +1320,6 @@
   "methods":[{"name":"setBindOnInit","parameterTypes":["boolean"] }]
 },
 {
-  "name":"org.apache.tomcat.util.net.Acceptor"
-},
-{
   "name":"org.apache.tomcat.util.net.NioEndpoint",
   "queryAllPublicMethods":true
 },
@@ -1548,9 +1511,6 @@
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "methods":[{"name":"equals","parameterTypes":["java.lang.Object"] }, {"name":"getOrder","parameterTypes":[] }, {"name":"hashCode","parameterTypes":[] }, {"name":"setOrder","parameterTypes":["int"] }]
-},
-{
-  "name":"org.springframework.aot.hint.RuntimeHintsRegistrar"
 },
 {
   "name":"org.springframework.aot.hint.annotation.Reflective",
@@ -2874,14 +2834,13 @@
 {
   "name":"org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController",
   "allDeclaredFields":true,
-  "queryAllDeclaredMethods":true,
-  "queryAllPublicMethods":true
+  "queryAllDeclaredMethods":true
 },
 {
   "name":"org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController",
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
-  "methods":[{"name":"close","parameterTypes":[] }, {"name":"error","parameterTypes":["jakarta.servlet.http.HttpServletRequest"] }, {"name":"shutdown","parameterTypes":[] }]
+  "methods":[{"name":"close","parameterTypes":[] }, {"name":"shutdown","parameterTypes":[] }]
 },
 {
   "name":"org.springframework.boot.autoconfigure.web.servlet.error.DefaultErrorViewResolver",
@@ -3721,6 +3680,9 @@
   "name":"org.springframework.cglib.core.ReflectUtils"
 },
 {
+  "name":"org.springframework.cglib.proxy.Callback"
+},
+{
   "name":"org.springframework.cglib.proxy.Dispatcher"
 },
 {
@@ -3818,11 +3780,6 @@
 {
   "name":"org.springframework.context.annotation.Configuration",
   "queryAllDeclaredMethods":true
-},
-{
-  "name":"org.springframework.context.annotation.ConfigurationClassEnhancer$EnhancedConfiguration",
-  "queryAllDeclaredMethods":true,
-  "queryAllPublicMethods":true
 },
 {
   "name":"org.springframework.context.annotation.ConfigurationClassPostProcessor",
@@ -5038,9 +4995,6 @@
 {
   "name":"sun.management.RuntimeImpl",
   "queryAllPublicConstructors":true
-},
-{
-  "name":"sun.nio.ch.ServerSocketChannelImpl"
 },
 {
   "name":"sun.reflect.ReflectionFactory",
