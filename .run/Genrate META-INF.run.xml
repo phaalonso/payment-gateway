@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Genrate META-INF" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="local" />
+    <option name="ALTERNATIVE_JRE_PATH" value="graalvm-ce-21" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="SCHEDULED_DEBUGGER" value="true" />
+    <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <module name="payment-gateway" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.alonso.pedro.paymentgateway.PaymentGatewayApplication" />
+    <option name="VM_PARAMETERS" value="-agentlib:native-image-agent=config-output-dir=src/main/resources/META-INF/native-image" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

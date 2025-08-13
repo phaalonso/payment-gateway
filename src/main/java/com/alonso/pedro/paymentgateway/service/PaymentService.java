@@ -43,8 +43,11 @@ public class PaymentService {
     @Value("${pagamento.processor.default.url}")
     private String defaultUrl;
 
-    @Value("${pagamento.processor.concurrency:1}")
+    @Value("${MAX_PAYMENTS_THREADS}")
     private Integer maxConcurrentPayments;
+
+    @Value("${MAX_PAYMENTS_PER_THREAD}")
+    private Integer maxPaymentsPerThread;
 
     private PaymentDTO firstPayment;
 
@@ -58,32 +61,10 @@ public class PaymentService {
         paymentsQueue.offer(paymentDTO);
     }
 
-    @Scheduled(fixedRate = 1000)
-    public void checkHealth() {
-        if (isPaymentProcessorHealthy.get() || firstPayment == null) {
-            return;
-        }
-
-        log.info("Checking if Payment Processor is healthy");
-
-        var result = sendPayment(firstPayment);
-
-        if (result) {
-            log.info("Payment is health again");
-            isPaymentProcessorHealthy.set(true);
-        }
-
-        if (!result) {
-            log.info("Payment processor is still not health");
-        }
-    }
-
     // fixedDelay runs after the last execution was finished
     // fixedRate runs even if the previous execution is running
     @Scheduled(fixedDelay = 100)
     public void saveInDatabase() {
-        var BATCH_SIZE = 500;
-
         if (databaseQueue.isEmpty())
             return;
 
@@ -91,21 +72,21 @@ public class PaymentService {
 
         log.info("Storing {} itens on the database", listSize);
 
-        for (int i = 0; i < Math.abs(listSize / BATCH_SIZE) + 1 ; i++) {
-            var payments = new ArrayList<PaymentDTO>();
+        var payments = new ArrayList<PaymentDTO>();
 
-            for (int j = 0; j < BATCH_SIZE; j++) {
-                var element = databaseQueue.poll();
+        // insert all elements accumulated in the list to the database
+        // uses batch update to do multiple inserts of at most 1000 elements
+        for (int j = 0; j < databaseQueue.size(); j++) {
+            var element = databaseQueue.poll();
 
-                if (element == null) {
-                    break;
-                }
-
-                payments.add(element);
+            if (element == null) {
+                break;
             }
 
-            paymentRepository.save(payments);
+            payments.add(element);
         }
+
+        paymentRepository.save(payments);
     }
 
     @Scheduled(initialDelay = 10, fixedDelay = 200)
@@ -127,6 +108,10 @@ public class PaymentService {
     }
 
     public void processPayment() {
+        if (!isPaymentProcessorHealthy.get()) {
+            return;
+        }
+
         var payment = paymentsQueue.poll();
 
         if (payment == null) {

@@ -1,9 +1,6 @@
 x-service-templates:
   payment-gateway: &payment-gateway
-    image: docker.io/phaalonso/rinha-backend-2025-java:0.0.3
-#    build:
-#      dockerfile: Dockerfile
-#      no_cache: true
+    image: docker.io/phaalonso/rinha-backend-2025-java:0.0.5
     hostname: api01
     depends_on:
       - db
@@ -20,8 +17,8 @@ x-service-templates:
       "spring.datasource.url": jdbc:postgresql://db:5432/rinha
       "spring.datasource.username": postgres
       "spring.datasource.password": postgres
-      "spring.datasource.hikari.minimum-idle": 25
-      "spring.datasource.hikari.maximum-pool-size": 50
+      "spring.datasource.hikari.minimum-idle": 1
+      "spring.datasource.hikari.maximum-pool-size": 10
       "spring.datasource.hikari.idle-timeout": 5000
       "spring.datasource.hikari.connection-timeout": 1000
     deploy:
