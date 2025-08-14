@@ -76,7 +76,7 @@ public class PaymentService {
 
         // insert all elements accumulated in the list to the database
         // uses batch update to do multiple inserts of at most 1000 elements
-        for (int j = 0; j < databaseQueue.size(); j++) {
+        for (int j = 0; j < listSize; j++) {
             var element = databaseQueue.poll();
 
             if (element == null) {

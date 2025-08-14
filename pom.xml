@@ -11,7 +11,7 @@
 
     <groupId>com.alonso.pedro</groupId>
     <artifactId>payment-gateway</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.6</version>
     <name>payment-gateway</name>
     <description>payment-gateway</description>
 
