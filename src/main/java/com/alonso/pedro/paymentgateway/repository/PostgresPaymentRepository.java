@@ -24,11 +24,6 @@ public class PostgresPaymentRepository implements PaymentRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @PostConstruct
-    public void test() {
-        jdbcTemplate.queryForObject("select 1", Integer.class);
-    }
-
     private static final String QUERY_INSERT = "INSERT INTO payment(correlationId, amount, requestedAt) VALUES (?, ?, ?)";
 
     @Override

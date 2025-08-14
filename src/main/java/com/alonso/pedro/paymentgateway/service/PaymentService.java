@@ -37,7 +37,6 @@ public class PaymentService {
 
     private final AtomicBoolean isPaymentProcessorHealthy = new AtomicBoolean(true);
 
-    //    private final PaymentRepository paymentRepository = InMemoryPaymentRepository.getInstance();
     private final PostgresPaymentRepository paymentRepository;
 
     @Value("${pagamento.processor.default.url}")
@@ -60,14 +59,12 @@ public class PaymentService {
 
     // fixedDelay runs after the last execution was finished
     // fixedRate runs even if the previous execution is running
-    @Scheduled(fixedDelay = 100)
+    @Scheduled(fixedDelay = 50)
     public void saveInDatabase() {
         if (databaseQueue.isEmpty())
             return;
 
         var listSize = databaseQueue.size();
-
-        log.info("Storing {} itens on the database", listSize);
 
         var payments = new ArrayList<PaymentDTO>();
 
@@ -92,17 +89,11 @@ public class PaymentService {
             return;
         }
 
-        log.info("Checking if Payment Processor is healthy");
-
         var result = sendPayment(firstPayment);
 
         if (result) {
-            log.info("Payment is health again");
+            log.info("Payment processor is health again");
             isPaymentProcessorHealthy.set(true);
-        }
-
-        if (!result) {
-            log.info("Payment processor is still not health");
         }
     }
 
@@ -114,8 +105,6 @@ public class PaymentService {
 
         var size = paymentsQueue.size();
         var processSize = Math.min(size, maxConcurrentPayments);
-
-        log.info("Processing {} of {} itens", processSize, size);
 
         try (ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor()) {
             for (int i = 0; i < processSize; i++) {
