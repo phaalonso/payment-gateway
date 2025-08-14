@@ -89,6 +89,26 @@ public class PaymentService {
         paymentRepository.save(payments);
     }
 
+    @Scheduled(fixedRate = 1000)
+    public void checkHealth() {
+        if (isPaymentProcessorHealthy.get() || firstPayment == null) {
+            return;
+        }
+
+        log.info("Checking if Payment Processor is healthy");
+
+        var result = sendPayment(firstPayment);
+
+        if (result) {
+            log.info("Payment is health again");
+            isPaymentProcessorHealthy.set(true);
+        }
+
+        if (!result) {
+            log.info("Payment processor is still not health");
+        }
+    }
+
     @Scheduled(initialDelay = 10, fixedDelay = 200)
     public void processJob() {
         if (paymentsQueue.isEmpty() || !isPaymentProcessorHealthy.get()) {
