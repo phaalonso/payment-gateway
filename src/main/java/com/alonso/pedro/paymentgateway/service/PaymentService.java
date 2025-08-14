@@ -46,9 +46,6 @@ public class PaymentService {
     @Value("${MAX_PAYMENTS_THREADS}")
     private Integer maxConcurrentPayments;
 
-    @Value("${MAX_PAYMENTS_PER_THREAD}")
-    private Integer maxPaymentsPerThread;
-
     private PaymentDTO firstPayment;
 
     public PaymentService(PostgresPaymentRepository paymentRepository) {
@@ -89,7 +86,7 @@ public class PaymentService {
         paymentRepository.save(payments);
     }
 
-    @Scheduled(fixedRate = 1000)
+    @Scheduled(initialDelay = 300, fixedRate = 300)
     public void checkHealth() {
         if (isPaymentProcessorHealthy.get() || firstPayment == null) {
             return;
@@ -109,7 +106,7 @@ public class PaymentService {
         }
     }
 
-    @Scheduled(initialDelay = 10, fixedDelay = 200)
+    @Scheduled(initialDelay = 10, fixedDelay = 50)
     public void processJob() {
         if (paymentsQueue.isEmpty() || !isPaymentProcessorHealthy.get()) {
             return;
