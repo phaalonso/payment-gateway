@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Local run" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="local" />
+    <option name="ALTERNATIVE_JRE_PATH" value="$USER_HOME$/.sdkman/candidates/java/21.0.8-graal" />
+    <option name="SCHEDULED_DEBUGGER" value="true" />
+    <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <module name="payment-gateway" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.alonso.pedro.paymentgateway.PaymentGatewayApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

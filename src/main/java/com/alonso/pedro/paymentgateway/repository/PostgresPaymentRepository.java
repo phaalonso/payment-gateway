@@ -24,11 +24,6 @@ public class PostgresPaymentRepository implements PaymentRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @PostConstruct
-    public void test() {
-        jdbcTemplate.queryForObject("select 1", Integer.class);
-    }
-
     private static final String QUERY_INSERT = "INSERT INTO payment(correlationId, amount, requestedAt) VALUES (?, ?, ?)";
 
     @Override
@@ -36,7 +31,7 @@ public class PostgresPaymentRepository implements PaymentRepository {
         jdbcTemplate.batchUpdate(
                 QUERY_INSERT,
                 paymentDTOList,
-                100,
+                1000,
                 (ps, paymentDTO) -> {
                     ps.setObject(1, paymentDTO.correlationId(), Types.OTHER);
                     ps.setBigDecimal(2, paymentDTO.amount());

@@ -545,6 +545,8 @@
   }, {
     "pattern":"\\Qstatic/index.html\\E"
   }, {
+    "pattern":"\\Qstatic/purge-payments\\E"
+  }, {
     "pattern":"java.base:\\Qjdk/internal/icu/impl/data/icudt72b/nfkc.nrm\\E"
   }, {
     "pattern":"jdk.jfr:\\Qjdk/jfr/internal/query/view.ini\\E"

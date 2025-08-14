@@ -153,7 +153,7 @@
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "queryAllDeclaredConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":["com.alonso.pedro.paymentgateway.repository.PostgresPaymentRepository"] }, {"name":"checkHealth","parameterTypes":[] }, {"name":"processJob","parameterTypes":[] }, {"name":"saveInDatabase","parameterTypes":[] }]
+  "methods":[{"name":"<init>","parameterTypes":["com.alonso.pedro.paymentgateway.repository.PostgresPaymentRepository"] }, {"name":"processJob","parameterTypes":[] }, {"name":"saveInDatabase","parameterTypes":[] }]
 },
 {
   "name":"com.couchbase.client.java.Bucket"
@@ -1511,6 +1511,13 @@
   "allDeclaredFields":true,
   "queryAllDeclaredMethods":true,
   "methods":[{"name":"equals","parameterTypes":["java.lang.Object"] }, {"name":"getOrder","parameterTypes":[] }, {"name":"hashCode","parameterTypes":[] }, {"name":"setOrder","parameterTypes":["int"] }]
+},
+{
+  "name":"org.springframework.aot.generate.Generated",
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"org.springframework.aot.hint.RuntimeHintsRegistrar"
 },
 {
   "name":"org.springframework.aot.hint.annotation.Reflective",
